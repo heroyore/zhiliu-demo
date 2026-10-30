@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="智流企业协同工作台：统一管理审批、项目任务、知识资料与组织成员">
+  <title>智流 · 企业协同工作台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-visual">
+      <div class="auth-brand"><span class="brand-symbol">智</span><div><strong>智流</strong><small>让每项工作都有进展</small></div></div>
+      <div class="auth-copy"><span class="overline light">ENTERPRISE WORKSPACE</span><h1>审批更快，任务更清楚，<br>知识随时找得到。</h1><p>把申请、项目、资料和成员放进同一个工作空间，进度清晰，责任到人，全程可追踪。</p></div>
+      <div class="auth-proof"><span>✓ 企业数据独立存储</span><span>✓ 关键操作全程留痕</span><span>✓ 外部服务按需启用</span></div>
+    </div>
+    <form class="auth-card" id="authForm">
+      <div class="mobile-brand"><span class="brand-symbol">智</span><strong>智流</strong></div>
+      <span class="overline" id="authEyebrow">安全登录</span>
+      <h2 id="authTitle">登录工作台</h2>
+      <p id="authHint">使用公司信息、员工工号和密码登录。</p>
+      <label class="field setup-only"><span>企业名称</span><input id="authWorkspace" autocomplete="organization" maxlength="200" placeholder="请输入企业全称或简称"></label>
+      <label class="field setup-only"><span>租户编码</span><input id="authTenantCode" maxlength="64" placeholder="例如：ACME-CN"></label>
+      <label class="field setup-only"><span>主管姓名</span><input id="authName" autocomplete="name" placeholder="请输入姓名"></label>
+      <label class="field setup-only"><span>工作邮箱</span><input id="authEmail" type="email" autocomplete="email" placeholder="name@company.com"></label>
+      <label class="field non-setup-only"><span>公司名称或租户编码</span><input id="authCompany" autocomplete="organization" maxlength="200" placeholder="例如：示例科技 或 ACME-CN"></label>
+      <label class="field"><span>员工工号</span><input id="authEmployeeNo" autocomplete="username" maxlength="64" required placeholder="例如：E1001"></label>
+      <label class="field activation-only" hidden><span>一次性激活码</span><input id="authActivationCode" autocomplete="one-time-code" placeholder="主管导入后生成的激活码"></label>
+      <label class="field"><span id="passwordLabel">安全密码</span><input id="authPassword" type="password" autocomplete="current-password" minlength="12" required placeholder="至少 12 个字符"></label>
+      <button class="button primary large" type="submit" id="authSubmit">登录工作台</button>
+      <button class="button secondary full login-only" type="button" id="activationModeButton">首次登录？使用激活码设置密码</button>
+      <p class="form-error" id="authError" role="alert"></p>
+      <p class="security-note">密码不会以明文保存 · 登录会话仅由服务端验证</p>
+    </form>
+  </section>
+
+  <div class="shell" id="appShell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><span class="brand-symbol">智</span><div><strong>智流</strong><small>企业协同工作台</small></div></div>
+      <div class="workspace-switch"><span class="workspace-logo" id="workspaceLogo">企</span><span><strong id="workspaceName">企业工作空间</strong><small>企业工作空间</small></span></div>
+      <nav class="nav" aria-label="主导航">
+        <span class="nav-label">工作</span>
+        <button class="nav-item active" data-page="dashboard"><i>⌂</i><span>工作台</span></button>
+        <button class="nav-item" data-page="approvals"><i>✓</i><span>审批中心</span><b id="approvalNavCount">0</b></button>
+        <button class="nav-item" data-page="tasks"><i>▦</i><span>项目与任务</span></button>
+        <button class="nav-item" data-page="clients"><i>◎</i><span>客户管理</span></button>
+        <button class="nav-item" data-page="meetings"><i>◷</i><span>会议记录</span></button>
+        <button class="nav-item" data-page="finance"><i>¥</i><span>收支记录</span></button>
+        <button class="nav-item" data-page="expenses"><i>票</i><span>报销报账</span></button>
+        <button class="nav-item" data-page="knowledge"><i>◇</i><span>知识与资料</span></button>
+        <button class="nav-item management-only" data-open-form="contract"><i>▤</i><span>制作合同草稿</span></button>
+        <button class="nav-item" data-page="assistant"><i>✦</i><span>智能助手</span><em>AI</em></button>
+        <span class="nav-label">管理</span>
+        <button class="nav-item management-only" data-page="organization"><i>◎</i><span>组织与成员</span></button>
+        <button class="nav-item management-only" data-page="audit"><i>≋</i><span>审计记录</span></button>
+        <button class="nav-item" data-page="backup"><i>⇩</i><span>数据备份</span></button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="sidebar-user" id="userMenu"><span class="avatar" id="sidebarAvatar">陈</span><span><strong id="sidebarUserName">加载中</strong><small id="sidebarUserEmail">—</small></span><b>•••</b></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" aria-label="打开菜单">☰</button>
+        <div class="breadcrumb"><span id="pageEyebrow">今日工作</span><strong id="pageTitle">工作台</strong></div>
+        <button class="global-search" id="globalSearchButton"><span>⌕</span><span>搜索审批、任务、资料或成员</span><kbd>Ctrl K</kbd></button>
+        <div class="top-actions">
+          <span class="connection" id="liveStatus"><i></i>连接中</span>
+          <button class="icon-button notification-button" id="notificationButton" aria-label="通知">♢<b id="notificationCount">0</b></button>
+          <button class="button primary" id="quickCreate">＋ 新建</button>
+          <button class="avatar-button" id="profileButton" aria-label="打开账户信息"><span class="avatar" id="topAvatar">陈</span></button>
+        </div>
+      </header>
+
+      <div class="demo-banner">这是体验版：数据只保存在当前浏览器，清理浏览器数据可能丢失。可在“数据备份”中导出；请勿填写真实敏感信息。</div>
+      <div class="page-wrap">
+        <section class="page active" id="page-dashboard" data-title="工作台" data-eyebrow="今日工作">
+          <div class="page-hero"><div><h1 id="welcomeTitle">欢迎体验智流</h1><p id="welcomeText">正在整理工作内容…</p></div><div class="hero-actions"><button class="button secondary" data-page="tasks">查看任务</button><button class="button primary" data-open-form="approval">发起审批</button></div></div>
+          <section class="getting-started" aria-label="快速上手"><div><h2>第一次使用？从这里开始</h2><p>选一项试试看，示例内容可以随意操作。</p></div><div class="getting-started-actions"><button data-open-form="approval"><b>1</b><span><strong>提交申请</strong><small>试试发起和处理审批</small></span></button><button data-open-form="task"><b>2</b><span><strong>安排任务</strong><small>填写内容并推进进度</small></span></button><button data-open-form="contract"><b>3</b><span><strong>制作合同</strong><small>填写信息，生成草稿</small></span></button></div></section>
+          <div class="metric-grid">
+            <article class="metric-card violet"><div class="metric-icon">✓</div><div><span>待审批</span><strong id="metricApprovals">0</strong><small>当前可见的申请</small></div><button data-page="approvals" aria-label="查看待审批申请">→</button></article>
+            <article class="metric-card blue"><div class="metric-icon">▦</div><div><span>未完成任务</span><strong id="metricTasks">0</strong><small>需要继续推进</small></div><button data-page="tasks" aria-label="查看未完成任务">→</button></article>
+            <article class="metric-card amber"><div class="metric-icon">!</div><div><span>高优先级任务</span><strong id="metricUrgent">0</strong><small>建议优先处理</small></div><button data-page="tasks" aria-label="查看高优先级任务">→</button></article>
+            <article class="metric-card green"><div class="metric-icon">◇</div><div><span>共享资料</span><strong id="metricDocs">0</strong><small>可供团队查阅</small></div><button data-page="knowledge" aria-label="查看共享资料">→</button></article>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel work-panel"><div class="panel-head"><div><h2>待办事项</h2><p>当前可见的审批和未完成任务</p></div></div><div class="segmented" id="workTabs"><button class="active" data-work-filter="all">全部</button><button data-work-filter="urgent">高优先级</button><button data-work-filter="approval">待审批</button></div><div class="work-list" id="dashboardWork"></div></article>
+            <aside class="panel quick-panel"><div class="panel-head"><div><h2>常用功能</h2><p>快速进入常用工作</p></div><span class="date-badge" id="todayBadge"></span></div><div class="quick-grid"><button data-open-form="approval"><span>✓</span><strong>发起审批</strong><small>提交申请</small></button><button data-open-form="task"><span>▦</span><strong>新建任务</strong><small>安排工作</small></button><button data-page="knowledge"><span>◇</span><strong>知识资料</strong><small>查找与共享</small></button><button data-page="assistant"><span>✦</span><strong>智能助手</strong><small>整理工作</small></button></div></aside>
+            <article class="panel project-panel"><div class="panel-head"><div><span class="section-kicker">PROJECTS</span><h2>项目进展</h2><p>查看完成进度与高优先级风险</p></div><button class="text-button" data-page="tasks">进入看板 →</button></div><div class="project-list" id="projectOverview"></div></article>
+            <article class="panel activity-panel management-only"><div class="panel-head"><div><span class="section-kicker">ACTIVITY</span><h2>最近动态</h2><p>查看关键操作与发生时间</p></div><button class="text-button" data-page="audit">查看记录 →</button></div><div class="activity-list" id="recentActivity"></div></article>
+          </div>
+        </section>
+
+        <section class="page" id="page-approvals" data-title="审批中心" data-eyebrow="流程与决策">
+          <div class="page-heading"><div><h1>审批中心</h1><p>提交申请后，点击列表中的申请即可查看、通过或拒绝。</p></div><button class="button primary" data-open-form="approval">＋ 发起审批</button></div>
+          <div class="mini-stat-row"><div><span>待审批</span><strong id="approvalPendingStat">0</strong></div><div><span>今日已处理</span><strong id="approvalDoneStat">0</strong></div><div><span>紧急申请</span><strong id="approvalUrgentStat">0</strong></div></div>
+          <article class="panel table-panel"><div class="toolbar"><div class="search-input"><span>⌕</span><input id="approvalSearch" placeholder="搜索标题、申请人或编号"></div><select id="approvalStatus"><option value="">全部状态</option><option>待审批</option><option>已通过</option><option>已拒绝</option></select><select id="approvalType"><option value="">全部流程</option><option>采购申请</option><option>费用报销</option><option>合同审批</option><option>通用审批</option></select></div><div class="data-table" id="approvalTable"></div></article>
+        </section>
+
+        <section class="page" id="page-tasks" data-title="项目与任务" data-eyebrow="协同执行">
+          <div class="page-heading"><div><h1>项目与任务</h1><p>创建任务后，点击任务卡片可以修改内容或推进进度。</p></div><button class="button primary" data-open-form="task">＋ 新建任务</button></div>
+          <div class="toolbar floating"><div class="search-input"><span>⌕</span><input id="taskSearch" placeholder="搜索任务、项目或负责人" aria-label="搜索任务"></div><select id="taskOwner" aria-label="筛选负责人"><option value="">全部任务</option><option value="mine">我的任务</option></select><select id="taskDue" aria-label="筛选截止时间"><option value="">全部截止时间</option><option value="overdue">已逾期</option><option value="today">今天截止</option><option value="week">未来 7 天</option><option value="none">未设日期</option></select><select id="taskPriority" aria-label="筛选优先级"><option value="">全部优先级</option><option>紧急</option><option>高</option><option>普通</option><option>低</option></select></div>
+          <div class="kanban" id="kanban"></div>
+        </section>
+
+        <section class="page" id="page-clients" data-title="客户管理"><div class="page-heading"><div><h1>客户管理</h1><p>记录客户信息和跟进情况，方便下一次联系。</p></div><button class="button primary" data-extra-create="clients">＋ 新增客户</button></div><div class="extra-stats" id="clientsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="clientsSearch" placeholder="搜索客户、联系人或跟进内容" aria-label="搜索客户"></div></div><div id="clientsList" class="extra-list"></div></article></section>
+        <section class="page" id="page-meetings" data-title="会议记录"><div class="page-heading"><div><h1>会议记录</h1><p>记录会议时间、参与人和结论，让每次沟通都有记录。</p></div><button class="button primary" data-extra-create="meetings">＋ 新建会议记录</button></div><div class="extra-stats" id="meetingsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="meetingsSearch" placeholder="搜索会议名称、参与人或结论" aria-label="搜索会议"></div></div><div id="meetingsList" class="extra-list"></div></article></section>
+        <section class="page" id="page-finance" data-title="收支记录"><div class="page-heading"><div><h1>收支记录</h1><p>记录收入与支出，快速查看收支情况。</p></div><button class="button primary" data-extra-create="finance">＋ 新增收支</button></div><div class="extra-stats" id="financeStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="financeSearch" placeholder="搜索收支项目、分类或说明" aria-label="搜索收支"></div></div><div id="financeList" class="extra-list"></div></article><p class="extra-note">这里仅用于演示记录，不连接银行，也不替代正式财务账簿。</p></section>
+        <section class="page" id="page-expenses" data-title="报销报账"><div class="page-heading"><div><h1>报销报账</h1><p>登记报销内容和金额，跟踪审批与报销状态。</p></div><button class="button primary" data-extra-create="expenses">＋ 新增报销</button></div><div class="extra-stats" id="expensesStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="expensesSearch" placeholder="搜索报销项目、申请人或说明" aria-label="搜索报销"></div></div><div id="expensesList" class="extra-list"></div></article><p class="extra-note">状态需手动更新；本演示不会自动审批、付款或上传发票。</p></section>
+        <section class="page" id="page-backup" data-title="数据备份"><div class="page-heading"><div><h1>数据备份</h1><p>把演示内容保存为文件，或从备份文件恢复到当前浏览器。</p></div></div><article class="panel backup-card"><h2>保存一份备份</h2><p>包含当前浏览器中的审批、任务、资料、合同、成员、客户、会议、收支和报销记录。</p><button class="button primary" id="backupExport">下载备份文件</button><h2>恢复已有备份</h2><p>恢复会替换当前浏览器中的演示数据。建议先下载当前备份。备份文件可能含你填写的内容，请妥善保管。</p><input type="file" id="backupFile" accept="application/json,.json" hidden><button class="button secondary" id="backupImport">选择备份文件</button></article></section>
+        <section class="page" id="page-knowledge" data-title="知识与资料" data-eyebrow="信息资产">
+          <div class="page-heading"><div><h1>知识与资料</h1><p>查看制度和资料摘要；制作的合同草稿也保存在这里。</p></div><button class="button primary" data-open-form="document">＋ 新建资料</button></div>
+          <div class="knowledge-layout"><aside class="category-card"><strong>资料分类</strong><button class="active" data-category="">全部资料 <b id="docAllCount">0</b></button><button data-category="公司制度">公司制度</button><button data-category="项目文档">项目文档</button><button data-category="合同模板">合同模板</button><button class="management-only" data-category="合同草稿">合同草稿</button><button data-category="培训资料">培训资料</button><hr><button data-category="__favorite">★ 我的收藏</button><button data-category="__recent">◷ 最近访问</button></aside><div><div class="toolbar floating"><div class="search-input grow"><span>⌕</span><input id="docSearch" placeholder="搜索标题、摘要或标签"></div><select id="docSort"><option value="new">最近创建</option><option value="title">标题排序</option></select></div><div class="document-grid" id="documentGrid"></div></div></div>
+        </section>
+
+        <section class="page" id="page-assistant" data-title="智能助手" data-eyebrow="企业智能">
+          <div class="assistant-shell"><aside class="chat-sidebar"><button class="button primary full" id="newChat">＋ 新建对话</button><span class="nav-label">试着这样问</span><button data-question="列出需要我处理的审批，并按紧急程度排序">整理我的待审批</button><button data-question="找出当前高优先级或临近截止的任务">检查任务风险</button><button data-question="根据审批和任务生成今日工作简报">生成今日简报</button><div class="integration-box"><span class="integration-dot" id="aiDot"></span><div><strong id="aiConnection">正在检查连接</strong><small id="aiModel">OpenAI Responses API</small></div></div></aside><div class="chat-main"><header><div class="assistant-avatar">✦</div><div><strong>智流智能助手</strong><span>只读取当前工作区数据 · 不会修改业务记录</span></div></header><div class="chat-messages" id="chatMessages"><div class="chat-empty"><div class="assistant-avatar large">✦</div><h2>今天想先处理什么？</h2><p>我可以整理待办、识别任务风险，或根据当前数据生成工作简报。</p></div></div><form class="chat-composer" id="chatForm"><textarea id="chatInput" rows="2" placeholder="输入问题，Enter 发送，Shift + Enter 换行"></textarea><div><span>重要决策请结合原始记录确认</span><button class="button primary" type="submit">发送 ↑</button></div></form></div></div>
+        </section>
+
+        <section class="page" id="page-organization" data-title="组织与成员" data-eyebrow="组织管理">
+          <div class="page-heading"><div><span class="overline">ORGANIZATION</span><h1>组织与成员</h1><p>演示成员档案；不创建真实登录账户。</p></div><div class="heading-actions"><input id="memberCsv" type="file" hidden><button id="importMembers" hidden>批量导入</button><button class="button primary" data-open-form="member">＋ 添加成员</button></div></div>
+          <div class="org-stat-grid"><article><span>有效成员</span><strong id="memberCount">0</strong><small>已加入工作空间</small></article><article><span>部门数量</span><strong id="departmentCount">0</strong><small>组织单元</small></article><article><span>管理角色</span><strong id="managerCount">0</strong><small>负责人及流程角色</small></article></div>
+          <article class="panel table-panel"><div class="toolbar"><div class="search-input"><span>⌕</span><input id="memberSearch" placeholder="搜索姓名、邮箱或部门"></div><select id="memberDepartment"><option value="">全部部门</option></select></div><div class="data-table" id="memberTable"></div></article>
+        </section>
+
+        <section class="page" id="page-audit" data-title="审计记录" data-eyebrow="安全与合规">
+          <div class="page-heading"><div><span class="overline">AUDIT TRAIL</span><h1>审计记录</h1><p>按时间查看关键操作，快速定位变更来源。</p></div><span class="security-chip">系统生成 · 不可修改</span></div>
+          <article class="panel table-panel"><div class="toolbar"><div class="search-input"><span>⌕</span><input id="auditSearch" placeholder="搜索实体、编号或动作"></div><select id="auditType"><option value="">全部类型</option><option value="approval">审批</option><option value="task">任务</option><option value="document">资料</option><option value="member">成员</option></select></div><div class="data-table" id="auditTable"></div></article>
+        </section>
+
+        <section class="page" id="page-settings" data-title="系统与集成" data-eyebrow="工作空间设置">
+          <div class="page-heading"><div><span class="overline">SYSTEM & INTEGRATIONS</span><h1>系统与集成</h1><p>检查服务连接、订阅状态与工作空间安全配置。</p></div></div>
+          <div class="settings-grid">
+            <article class="integration-card"><div class="integration-logo openai">✦</div><div><span class="status-pill" id="openaiStatus">检查中</span><h2>OpenAI</h2><p>为智能助手提供工作汇总、风险分析与文字辅助。</p><code>OPENAI_API_KEY</code><small id="openaiModelSetting">模型：由环境变量配置</small></div></article>
+            <article class="integration-card"><div class="integration-logo stripe">S</div><div><span class="status-pill" id="stripeStatus">检查中</span><h2>Stripe Billing</h2><p>安全完成订阅支付，并自动同步订阅状态。</p><code>STRIPE_SECRET_KEY</code><button class="button secondary" data-checkout>开通订阅</button></div></article>
+            <article class="integration-card"><div class="integration-logo database">▤</div><div><span class="status-pill connected">运行中</span><h2>SQLite 数据库</h2><p>保存审批、任务、成员、资料、会话与审计记录。</p><code>workflow.db</code><small id="auditCountSetting">0 条审计记录</small></div></article>
+          </div>
+          <article class="panel security-panel"><div><span class="section-kicker">SECURITY</span><h2>安全保护</h2><p>账户、会话、外部回调和关键业务操作均由服务端校验与记录。</p></div><div class="security-list"><span>✓ 不保存明文密码</span><span>✓ 30 分钟空闲失效</span><span>✓ 外部密钥仅来自环境变量</span><span>✓ 关键写入保留审计</span></div></article>
+        </section>
+      </div>
+    </main>
+
+    <aside class="side-drawer" id="sideDrawer" aria-hidden="true"><div class="drawer-head"><div><span class="overline" id="drawerEyebrow">DETAIL</span><h2 id="drawerTitle">详情</h2></div><button class="icon-button" data-close-drawer aria-label="关闭详情">×</button></div><div class="drawer-body" id="drawerBody"></div></aside>
+    <aside class="notification-drawer" id="notificationDrawer" aria-hidden="true"><div class="drawer-head"><div><span class="overline">INBOX</span><h2>通知中心</h2></div><button class="text-button" id="markAllRead">全部标为已读</button><button class="icon-button" data-close-notifications aria-label="关闭通知">×</button></div><div id="notificationList"></div></aside>
+    <div class="search-palette" id="searchPalette" hidden><div class="palette-box"><div class="palette-input"><span>⌕</span><input id="globalSearch" placeholder="搜索审批、任务、资料、成员…" autocomplete="off"><kbd>ESC</kbd></div><div class="palette-results" id="globalResults"><div class="empty-state compact">输入关键词开始搜索</div></div></div></div>
+    <div class="create-menu" id="createMenu" hidden><button data-open-form="approval"><span>✓</span><div><strong>发起审批</strong><small>提交采购、报销或合同申请</small></div></button><button data-open-form="task"><span>▦</span><div><strong>新建任务</strong><small>明确负责人、截止日与要求</small></div></button><button data-open-form="document"><span>◇</span><div><strong>新建资料</strong><small>保存制度、模板或项目经验</small></div></button><button class="management-only" data-open-form="member"><span>◎</span><div><strong>添加成员</strong><small>设置部门、岗位与角色</small></div></button></div>
+  </div>
+
+  <div class="modal-layer" id="modalLayer" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><span class="overline" id="modalEyebrow">CREATE</span><h2 id="modalTitle">新建</h2></div><button class="icon-button" data-close-modal aria-label="关闭弹窗">×</button></div><form id="entityForm"><div class="modal-body" id="modalBody"></div><div class="modal-actions"><button class="button secondary" type="button" data-close-modal>取消</button><button class="button primary" type="submit" id="modalSubmit">保存</button></div></form></div></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="demo-api.js"></script>
+  <script src="app.js"></script>
+  <script src="work-content.js"></script>
+</body>
+</html>

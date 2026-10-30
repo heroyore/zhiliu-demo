@@ -1,0 +1,3 @@
+﻿公司名称,租户编码,员工工号,姓名,部门,岗位,邮箱,主管标记
+示例科技,ACME-CN,E1001,张三,研发部,工程师,zhangsan@example.com,none
+示例科技,ACME-CN,M1001,李主管,研发部,研发主管,lizhuguan@example.com,manager
