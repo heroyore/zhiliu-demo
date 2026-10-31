@@ -490,8 +490,9 @@ function renderGlobalSearch(query) {
     ...state.data.tasks.map(item => ({ type: 'task', id: item.id, title: item.title, detail: `任务 · ${item.project} · ${item.status}` })),
     ...state.data.documents.map(item => ({ type: 'document', id: item.id, title: item.title, detail: `资料 · ${item.category}` })),
     ...state.data.members.map(item => ({ type: 'member', id: item.id, title: item.name, detail: `成员 · ${item.department} · ${item.email}` })),
+    ...(window.workSearchRecords ? window.workSearchRecords() : []),
   ].filter(item => `${item.title} ${item.detail} ${item.id}`.toLowerCase().includes(key)).slice(0, 12);
-  $('#globalResults').innerHTML = groups.length ? groups.map(item => `<div class="search-result" data-open-type="${item.type}" data-open-id="${esc(item.id)}"><span class="work-icon">${item.type === 'approval' ? '✓' : item.type === 'task' ? '▦' : item.type === 'document' ? '◇' : '◎'}</span><div><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></div></div>`).join('') : empty('没有找到匹配结果');
+  $('#globalResults').innerHTML = groups.length ? groups.map(item => `<button type="button" class="search-result" ${item.extra ? `data-extra-edit="${item.type}" data-id="${esc(item.id)}"` : `data-open-type="${item.type}" data-open-id="${esc(item.id)}"`}><span class="work-icon">${item.type === 'approval' ? '✓' : item.type === 'task' ? '▦' : item.type === 'document' ? '◇' : '◎'}</span><div><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></div></button>`).join('') : empty('没有找到匹配结果');
 }
 
 function toggleCreateMenu() { $('#createMenu').hidden = !$('#createMenu').hidden; }
@@ -773,6 +774,10 @@ $('#authForm').addEventListener('submit', async event => {
 if (location.protocol === 'file:') {
   $('#authError').textContent = '请运行“启动演示版.ps1”，然后打开 http://127.0.0.1:8081/，不要直接打开此文件。';
 } else initialize().catch(error => {
-  $('#authError').textContent = `服务未连接：${error.message}`;
+  $('#authTitle').textContent = '暂时无法读取工作台';
+  $('#authHint').textContent = '此体验版无需登录。请先保留数据副本，恢复浏览器存储权限后刷新重试。';
+  $('#authForm').querySelectorAll('label,button,.overline,.security-note').forEach(element => element.hidden=true);
+  $('#authError').textContent = error.message;
+  $('#authForm').insertAdjacentHTML('beforeend','<button class="button secondary full" type="button" data-backup-raw>导出原始数据</button>');
   $('#authScreen').hidden = false;
 });
