@@ -7,6 +7,18 @@ const source = name => fs.readFileSync(path.join(__dirname,'../dist',name),'utf8
 const rulesContext = vm.createContext({});
 vm.runInContext(source('work-rules.js'),rulesContext);
 const rules = rulesContext.WorkRules;
+test('task deadlines exclude completed tasks and correctly cross month/year boundaries',()=>{
+  assert.equal(rules.taskTiming({due_date:'2026-12-31',status:'进行中'},'2027-01-01').label,'逾期 1 天');
+  assert.equal(rules.taskTiming({due_date:'2026-12-31',status:'已完成'},'2027-01-01').overdue,false);
+  assert.equal(rules.taskTiming({due_date:'2027-01-01'},'2027-01-01').label,'今天截止');
+  assert.equal(rules.taskTiming({due_date:''},'2027-01-01').label,'');
+});
+test('task sorting keeps undated tasks last and preserves stored ordering',()=>{
+  const tasks=[{id:'none',priority:'紧急'},{id:'later',due_date:'2026-11-03',priority:'高'},{id:'first',due_date:'2026-11-01',priority:'普通'}];
+  assert.equal(rules.sortTasks(tasks,'due').map(x=>x.id).join(','),'first,later,none');
+  assert.equal(rules.sortTasks(tasks,'priority')[0].id,'none');
+  assert.equal(tasks[0].id,'none');
+});
 test('backup validation rejects damaged rows before replacing existing data',()=>{
   const payload={format:'zhiliu-demo-backup',version:1,main:{user:{name:'演示'},workspace:{name:'公司'},capabilities:{},integrations:{},approvals:[{history:[]}],tasks:[],documents:[],members:[],audit:[],notifications:[]},work:{clients:[],meetings:[],finance:[]}};
   assert.ok(rules.validBackup(payload));

@@ -211,17 +211,34 @@ function taskFilter() {
 }
 
 function renderTasks() {
-  const filtered = taskFilter();
+  const filtered = WorkRules.sortTasks(taskFilter(), $('#taskSort').value);
+  const today = new Date().toLocaleDateString('sv-SE');
+  const timing = task => { const info=WorkRules.taskTiming(task,today); return `<time>${esc(task.due_date || task.due_text || '未设日期')}</time>${info.label?`<span class="deadline-badge ${info.overdue?'overdue':''}">${esc(info.label)}</span>`:''}`; };
+  const overdue = filtered.filter(x=>WorkRules.taskTiming(x,today).overdue).length;
+  $('#taskResultCount').textContent = `显示 ${filtered.length} / ${state.data.tasks.length} 项任务，其中 ${overdue} 项已逾期`;
+  $('#kanban').hidden = $('#taskView').value==='list';
+  $('#taskList').hidden = $('#taskView').value!=='list';
+  $('#taskList').innerHTML = filtered.length ? filtered.map(task=>`<button type="button" class="task-list-row" data-open-type="task" data-open-id="${esc(task.id)}"><span class="task-list-title"><strong>${esc(task.title)}</strong><small>${esc(task.project||'日常工作')} · ${esc(task.owner||'未分配')}</small></span><span class="status-pill ${esc(task.status)}">${esc(task.status)}</span><span class="priority ${esc(task.priority)}">${esc(task.priority||'普通')}</span><span class="task-deadline">${timing(task)}</span></button>`).join('') : empty('没有符合条件的任务，试试清除筛选');
   $('#kanban').innerHTML = taskStates.map(column => {
     const tasks = filtered.filter(item => item.status === column);
     return `<section class="kanban-column"><div class="kanban-head"><i></i><strong>${column}</strong><span>${tasks.length}</span></div>${tasks.length ? tasks.map(task => `
-      <article class="task-card" data-open-type="task" data-open-id="${esc(task.id)}">
+      <article class="task-card" role="button" tabindex="0" data-open-type="task" data-open-id="${esc(task.id)}">
         <div class="task-card-top"><span class="task-tag">${esc(task.tag)}</span><span class="priority ${esc(task.priority)}">${esc(task.priority || '普通')}</span></div>
         <h3>${esc(task.title)}</h3><p>${esc(task.description || '暂无说明')}</p><span class="task-project">${esc(task.project || '日常工作')}</span>
-        <div class="task-meta"><time>${esc(task.due_date || task.due_text || '待安排')}</time><span class="task-owner">${initials(task.owner)}</span></div>
+        <div class="task-meta"><span class="task-deadline">${timing(task)}</span><span class="task-owner" title="${esc(task.owner)}">${initials(task.owner)}</span></div>
       </article>`).join('') : `<div class="empty-state compact">当前阶段暂无任务</div>`}</section>`;
   }).join('');
 }
+
+$('#taskView').addEventListener('change',renderTasks);
+$('#taskSort').addEventListener('change',renderTasks);
+$('#taskClearFilters').addEventListener('click',()=>{
+  ['taskSearch','taskOwner','taskDue','taskPriority'].forEach(id=>document.getElementById(id).value='');
+  renderTasks();
+});
+document.addEventListener('keydown',event=>{
+  if(event.target.matches('.task-card') && ['Enter',' '].includes(event.key)) { event.preventDefault(); event.target.click(); }
+});
 
 function documentFilter() {
   const query = $('#docSearch').value.trim().toLowerCase();

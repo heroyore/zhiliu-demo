@@ -1,5 +1,19 @@
 // Shared business rules; browser-local bookkeeping, never initiates a bank payment.
 globalThis.WorkRules = {
+  taskTiming(task, today) {
+    if (!task.due_date || task.status === '已完成') return {label:'',overdue:false};
+    const days = Math.round((Date.parse(task.due_date+'T00:00:00Z') - Date.parse(today+'T00:00:00Z')) / 86400000);
+    if (!Number.isFinite(days)) return {label:'',overdue:false};
+    return {label:days<0 ? `逾期 ${-days} 天` : days===0 ? '今天截止' : days===1 ? '明天截止' : '',overdue:days<0};
+  },
+  sortTasks(tasks, mode) {
+    const rank = x => ({'紧急':0,'高':1,'普通':2,'低':3}[x.priority] ?? 2);
+    return [...tasks].sort((a,b) => {
+      if (mode==='priority') return rank(a)-rank(b) || (a.due_date||'9999').localeCompare(b.due_date||'9999');
+      if (mode==='due') return (a.due_date||'9999').localeCompare(b.due_date||'9999') || rank(a)-rank(b);
+      return 0;
+    });
+  },
   validBackup(payload) {
     const object = x => x && typeof x === 'object' && !Array.isArray(x);
     const rows = x => Array.isArray(x) && x.every(object);

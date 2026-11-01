@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="智流企业协同工作台：统一管理审批、项目任务、知识资料与组织成员">
   <title>智流 · 企业协同工作台</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261101-tasks">
 </head>
 <body>
   <section class="auth-screen" id="authScreen">
@@ -101,7 +101,7 @@
         <section class="page" id="page-tasks" data-title="项目与任务" data-eyebrow="协同执行">
           <div class="page-heading"><div><h1>项目与任务</h1><p>创建任务后，点击任务卡片可以修改内容或推进进度。</p></div><button class="button primary" data-open-form="task">＋ 新建任务</button></div>
           <div class="toolbar floating"><div class="search-input"><span>⌕</span><input id="taskSearch" placeholder="搜索任务、项目或负责人" aria-label="搜索任务"></div><select id="taskOwner" aria-label="筛选负责人"><option value="">全部任务</option><option value="mine">我的任务</option></select><select id="taskDue" aria-label="筛选截止时间"><option value="">全部截止时间</option><option value="overdue">已逾期</option><option value="today">今天截止</option><option value="week">未来 7 天</option><option value="none">未设日期</option></select><select id="taskPriority" aria-label="筛选优先级"><option value="">全部优先级</option><option>紧急</option><option>高</option><option>普通</option><option>低</option></select></div>
-          <div class="kanban" id="kanban"></div>
+          <div class="task-view-controls"><label>视图 <select id="taskView"><option value="board">看板</option><option value="list">列表</option></select></label><label>排序 <select id="taskSort"><option value="default">默认顺序</option><option value="due">截止日期最近</option><option value="priority">优先级最高</option></select></label><button class="button secondary" id="taskClearFilters" type="button">清除筛选</button><span id="taskResultCount" role="status"></span></div><div class="kanban" id="kanban"></div><div id="taskList" class="panel task-list" hidden></div>
         </section>
 
         <section class="page" id="page-clients" data-title="客户管理"><div class="page-heading"><div><h1>客户管理</h1><p>记录客户信息和跟进情况，方便下一次联系。</p></div><button class="button primary" data-extra-create="clients">＋ 新增客户</button></div><div class="extra-stats" id="clientsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="clientsSearch" placeholder="搜索客户、联系人或跟进内容" aria-label="搜索客户"></div></div><div id="clientsList" class="extra-list"></div></article></section>
@@ -149,9 +149,9 @@
 
   <div class="modal-layer" id="modalLayer" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><span class="overline" id="modalEyebrow">CREATE</span><h2 id="modalTitle">新建</h2></div><button class="icon-button" data-close-modal aria-label="关闭弹窗">×</button></div><form id="entityForm"><div class="modal-body" id="modalBody"></div><div class="modal-actions"><button class="button secondary" type="button" data-close-modal>取消</button><button class="button primary" type="submit" id="modalSubmit">保存</button></div></form></div></div>
   <div class="toast" id="toast" role="status"></div>
-  <script src="demo-api.js"></script>
-  <script src="app.js"></script>
-  <script src="work-rules.js"></script>
-  <script src="work-content.js"></script>
+  <script src="demo-api.js?v=20261101-tasks"></script>
+  <script src="work-rules.js?v=20261101-tasks"></script>
+  <script src="app.js?v=20261101-tasks"></script>
+  <script src="work-content.js?v=20261101-tasks"></script>
 </body>
 </html>
