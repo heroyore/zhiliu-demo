@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="智流企业协同工作台：统一管理审批、项目任务、知识资料与组织成员">
   <title>智流 · 企业协同工作台</title>
-  <link rel="stylesheet" href="styles.css?v=20261101-tasks">
+  <link rel="stylesheet" href="styles.css?v=20261101-buttons">
 </head>
 <body>
   <section class="auth-screen" id="authScreen">
@@ -40,20 +40,20 @@
       <div class="workspace-switch"><span class="workspace-logo" id="workspaceLogo">企</span><span><strong id="workspaceName">企业工作空间</strong><small>企业工作空间</small></span></div>
       <nav class="nav" aria-label="主导航">
         <span class="nav-label">工作</span>
-        <button class="nav-item active" data-page="dashboard"><i>⌂</i><span>工作台</span></button>
-        <button class="nav-item" data-page="approvals"><i>✓</i><span>审批中心</span><b id="approvalNavCount">0</b></button>
-        <button class="nav-item" data-page="tasks"><i>▦</i><span>项目与任务</span></button>
-        <button class="nav-item" data-page="clients"><i>◎</i><span>客户管理</span></button>
-        <button class="nav-item" data-page="meetings"><i>◷</i><span>会议记录</span></button>
-        <button class="nav-item" data-page="finance"><i>¥</i><span>收支记录</span></button>
-        <button class="nav-item" data-page="expenses"><i>票</i><span>报销报账</span></button>
-        <button class="nav-item" data-page="knowledge"><i>◇</i><span>知识与资料</span></button>
-        <button class="nav-item management-only" data-open-form="contract"><i>▤</i><span>制作合同草稿</span></button>
-        <button class="nav-item" data-page="assistant"><i>✦</i><span>智能助手</span><em>AI</em></button>
+        <button class="nav-item active" data-page="dashboard"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg></i><span>工作台</span></button>
+        <button class="nav-item" data-page="approvals"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="m8 12 3 3 5-6"/></svg></i><span>审批中心</span><b id="approvalNavCount">0</b></button>
+        <button class="nav-item" data-page="tasks"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16M15 4v16"/></svg></i><span>项目与任务</span></button>
+        <button class="nav-item" data-page="clients"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/></svg></i><span>客户管理</span></button>
+        <button class="nav-item" data-page="meetings"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4M17 3v4M3 11h18M8 15h3M8 18h7"/></svg></i><span>会议记录</span></button>
+        <button class="nav-item" data-page="finance"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"/><path d="M3 9h18M16 14h2"/></svg></i><span>收支记录</span></button>
+        <button class="nav-item" data-page="expenses"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM8 7h8M8 11h8M8 15h4"/></svg></i><span>报销报账</span></button>
+        <button class="nav-item" data-page="knowledge"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6C8 3 4 3 2 4v15c4-1 7 0 10 2 3-2 6-3 10-2V4c-4-1-7 0-10 2zM12 6v15"/></svg></i><span>知识与资料</span></button>
+        <button class="nav-item management-only" data-open-form="contract"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9zM14 2v7h7M7 13h10M7 17h7"/></svg></i><span>制作合同草稿</span></button>
+        <button class="nav-item" data-page="assistant"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 3 6 6 3-6 3-3 6-3-6-6-3 6-3z"/></svg></i><span>智能助手</span><em>AI</em></button>
         <span class="nav-label">管理</span>
-        <button class="nav-item management-only" data-page="organization"><i>◎</i><span>组织与成员</span></button>
-        <button class="nav-item management-only" data-page="audit"><i>≋</i><span>审计记录</span></button>
-        <button class="nav-item" data-page="backup"><i>⇩</i><span>数据备份</span></button>
+        <button class="nav-item management-only" data-page="organization"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/></svg></i><span>组织与成员</span></button>
+        <button class="nav-item management-only" data-page="audit"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></svg></i><span>审计记录</span></button>
+        <button class="nav-item" data-page="backup"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></i><span>数据备份</span></button>
       </nav>
       <div class="sidebar-footer">
         <button class="sidebar-user" id="userMenu"><span class="avatar" id="sidebarAvatar">陈</span><span><strong id="sidebarUserName">加载中</strong><small id="sidebarUserEmail">—</small></span><b>•••</b></button>
@@ -62,12 +62,12 @@
 
     <main class="main">
       <header class="topbar">
-        <button class="icon-button menu-button" id="menuButton" aria-label="打开菜单">☰</button>
+        <button class="icon-button menu-button" id="menuButton" aria-label="打开菜单"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
         <div class="breadcrumb"><span id="pageEyebrow">今日工作</span><strong id="pageTitle">工作台</strong></div>
         <button class="global-search" id="globalSearchButton"><span>⌕</span><span>搜索任务、客户、报销等全部内容</span><kbd>Ctrl K</kbd></button>
         <div class="top-actions">
           <span class="connection" id="liveStatus"><i></i>连接中</span>
-          <button class="icon-button notification-button" id="notificationButton" aria-label="通知">♢<b id="notificationCount">0</b></button>
+          <button class="icon-button notification-button" id="notificationButton" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><b id="notificationCount">0</b></button>
           <button class="button primary" id="quickCreate">＋ 新建</button>
           <button class="avatar-button" id="profileButton" aria-label="打开账户信息"><span class="avatar" id="topAvatar">陈</span></button>
         </div>
@@ -149,9 +149,9 @@
 
   <div class="modal-layer" id="modalLayer" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><span class="overline" id="modalEyebrow">CREATE</span><h2 id="modalTitle">新建</h2></div><button class="icon-button" data-close-modal aria-label="关闭弹窗">×</button></div><form id="entityForm"><div class="modal-body" id="modalBody"></div><div class="modal-actions"><button class="button secondary" type="button" data-close-modal>取消</button><button class="button primary" type="submit" id="modalSubmit">保存</button></div></form></div></div>
   <div class="toast" id="toast" role="status"></div>
-  <script src="demo-api.js?v=20261101-tasks"></script>
-  <script src="work-rules.js?v=20261101-tasks"></script>
-  <script src="app.js?v=20261101-tasks"></script>
-  <script src="work-content.js?v=20261101-tasks"></script>
+  <script src="demo-api.js?v=20261101-buttons"></script>
+  <script src="work-rules.js?v=20261101-buttons"></script>
+  <script src="app.js?v=20261101-buttons"></script>
+  <script src="work-content.js?v=20261101-buttons"></script>
 </body>
 </html>
