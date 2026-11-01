@@ -162,7 +162,7 @@
     try {
       if(file.size>5*1024*1024) throw new Error('备份文件不能超过 5 MB');
       const payload=JSON.parse(await file.text()), main=payload.main, work=payload.work;
-      if(payload.format!=='zhiliu-demo-backup'||payload.version!==1||!main||!main.user||!main.workspace||!main.capabilities||!main.integrations||!['approvals','tasks','documents','members','audit','notifications'].every(k=>Array.isArray(main[k]))||!work||!['clients','meetings','finance'].every(k=>Array.isArray(work[k]))||(work.expenses&&!Array.isArray(work.expenses))) throw new Error('文件不是可用的智流演示备份');
+      if(!WorkRules.validBackup(payload)) throw new Error('备份内容不完整或格式有误，当前数据未被修改');
       if(!confirm('恢复会替换当前浏览器中的全部演示数据。建议先下载当前备份。确定继续？')) return;
       const oldMain=localStorage.getItem(mainKey),oldWork=localStorage.getItem(key);
       try { localStorage.setItem(mainKey,JSON.stringify(main));localStorage.setItem(key,JSON.stringify(work)); }

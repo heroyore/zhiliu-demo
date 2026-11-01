@@ -1,5 +1,19 @@
 // Shared business rules; browser-local bookkeeping, never initiates a bank payment.
 globalThis.WorkRules = {
+  validBackup(payload) {
+    const object = x => x && typeof x === 'object' && !Array.isArray(x);
+    const rows = x => Array.isArray(x) && x.every(object);
+    const main = payload?.main, work = payload?.work;
+    return payload?.format === 'zhiliu-demo-backup' && payload.version === 1 &&
+      object(main) && object(main.user) && typeof main.user.name === 'string' &&
+      object(main.workspace) && typeof main.workspace.name === 'string' &&
+      object(main.capabilities) && object(main.integrations) &&
+      ['approvals','tasks','documents','members','audit','notifications'].every(k => rows(main[k])) &&
+      main.approvals.every(x => Array.isArray(x.history) && x.history.every(object)) &&
+      object(work) && ['clients','meetings','finance'].every(k => rows(work[k])) &&
+      (work.expenses === undefined || rows(work.expenses)) &&
+      [...work.clients,...work.meetings,...work.finance,...(work.expenses || [])].every(x => typeof x.id === 'string' && (x.history === undefined || (Array.isArray(x.history) && x.history.every(object))));
+  },
   amount(value) {
     const text = String(value).trim();
     if (!/^\d+(\.\d{1,2})?$/.test(text) || Number(text) <= 0 || Number(text) > 999999999)

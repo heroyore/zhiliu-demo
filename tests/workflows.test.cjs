@@ -7,6 +7,13 @@ const source = name => fs.readFileSync(path.join(__dirname,'../dist',name),'utf8
 const rulesContext = vm.createContext({});
 vm.runInContext(source('work-rules.js'),rulesContext);
 const rules = rulesContext.WorkRules;
+test('backup validation rejects damaged rows before replacing existing data',()=>{
+  const payload={format:'zhiliu-demo-backup',version:1,main:{user:{name:'演示'},workspace:{name:'公司'},capabilities:{},integrations:{},approvals:[{history:[]}],tasks:[],documents:[],members:[],audit:[],notifications:[]},work:{clients:[],meetings:[],finance:[]}};
+  assert.ok(rules.validBackup(payload));
+  payload.work.finance.push(null); assert.ok(!rules.validBackup(payload));
+  payload.work.finance=[]; payload.main.approvals[0].history=null; assert.ok(!rules.validBackup(payload));
+  payload.main.approvals[0].history=[]; payload.work.expenses=[{id:'e',history:[null]}]; assert.ok(!rules.validBackup(payload));
+});
 test('expense approval → payment creates exactly one matching ledger entry and retains history',()=>{
   const original={expenses:[{id:'e1',title:'交通',applicant:'甲',amount:'12.50',status:'待审批'}],finance:[]};
   const approved=rules.transition(original,'e1','approve','','2026-10-31');
