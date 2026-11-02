@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="智流企业协同工作台：统一管理审批、项目任务、知识资料与组织成员">
   <title>智流 · 企业协同工作台</title>
-  <link rel="stylesheet" href="styles.css?v=20261101-buttons">
+  <link rel="stylesheet" href="styles.css?v=20261102-meetings">
 </head>
 <body>
   <section class="auth-screen" id="authScreen">
@@ -105,7 +105,7 @@
         </section>
 
         <section class="page" id="page-clients" data-title="客户管理"><div class="page-heading"><div><h1>客户管理</h1><p>记录客户信息和跟进情况，方便下一次联系。</p></div><button class="button primary" data-extra-create="clients">＋ 新增客户</button></div><div class="extra-stats" id="clientsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="clientsSearch" placeholder="搜索客户、联系人或跟进内容" aria-label="搜索客户"></div></div><div id="clientsList" class="extra-list"></div></article></section>
-        <section class="page" id="page-meetings" data-title="会议记录"><div class="page-heading"><div><h1>会议记录</h1><p>记录会议时间、参与人和结论，让每次沟通都有记录。</p></div><button class="button primary" data-extra-create="meetings">＋ 新建会议记录</button></div><div class="extra-stats" id="meetingsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="meetingsSearch" placeholder="搜索会议名称、参与人或结论" aria-label="搜索会议"></div></div><div id="meetingsList" class="extra-list"></div></article></section>
+        <section class="page" id="page-meetings" data-title="会议记录"><div class="page-heading"><div><h1>会议记录</h1><p>记录会议结论，生成带负责人和截止日期的跟进任务。</p></div><button class="button primary" data-extra-create="meetings">＋ 新建会议记录</button></div><div class="extra-stats" id="meetingsStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="meetingsSearch" placeholder="搜索会议名称、参与人或结论" aria-label="搜索会议"></div></div><div id="meetingsList" class="extra-list"></div></article></section>
         <section class="page" id="page-finance" data-title="收支记录"><div class="page-heading"><div><h1>收支记录</h1><p>记录收入与支出，快速查看收支情况。</p></div><button class="button primary" data-extra-create="finance">＋ 新增收支</button></div><div class="extra-stats" id="financeStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="financeSearch" placeholder="搜索收支项目、分类或说明" aria-label="搜索收支"></div></div><div id="financeList" class="extra-list"></div></article><p class="extra-note">这里仅用于演示记录，不连接银行，也不替代正式财务账簿。</p></section>
         <section class="page" id="page-expenses" data-title="报销报账"><div class="page-heading"><div><h1>报销报账</h1><p>提交报销 → 审批处理 → 登记已报销，自动生成一笔支出。</p></div><button class="button primary" data-extra-create="expenses">＋ 新增报销</button></div><div class="extra-stats" id="expensesStats"></div><article class="panel extra-panel"><div class="toolbar"><div class="search-input grow"><span>⌕</span><input id="expensesSearch" placeholder="搜索报销项目、申请人或说明" aria-label="搜索报销"></div></div><div id="expensesList" class="extra-list"></div></article><p class="extra-note">由当前使用者手动处理审批；登记已报销后自动生成支出并保留历史，不会发起真实转账。</p></section>
         <section class="page" id="page-backup" data-title="数据备份"><div class="page-heading"><div><h1>数据备份</h1><p>把演示内容保存为文件，或从备份文件恢复到当前浏览器。</p></div></div><article class="panel backup-card"><h2>保存一份备份</h2><p>包含当前浏览器中的审批、任务、资料、合同、成员、客户、会议、收支和报销记录。</p><button class="button primary" id="backupExport">下载备份文件</button><h2>数据异常时保留副本</h2><p>如果记录无法读取，先导出原始数据供恢复使用；原始副本不能直接作为普通备份导入。</p><button class="button secondary" type="button" data-backup-raw>导出原始数据</button><h2>恢复已有备份</h2><p>恢复会替换当前浏览器中的演示数据。建议先下载当前备份。备份文件可能含你填写的内容，请妥善保管。</p><input type="file" id="backupFile" accept="application/json,.json" hidden><button class="button secondary" id="backupImport">选择备份文件</button></article></section>
@@ -149,9 +149,9 @@
 
   <div class="modal-layer" id="modalLayer" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><span class="overline" id="modalEyebrow">CREATE</span><h2 id="modalTitle">新建</h2></div><button class="icon-button" data-close-modal aria-label="关闭弹窗">×</button></div><form id="entityForm"><div class="modal-body" id="modalBody"></div><div class="modal-actions"><button class="button secondary" type="button" data-close-modal>取消</button><button class="button primary" type="submit" id="modalSubmit">保存</button></div></form></div></div>
   <div class="toast" id="toast" role="status"></div>
-  <script src="demo-api.js?v=20261101-buttons"></script>
-  <script src="work-rules.js?v=20261101-buttons"></script>
-  <script src="app.js?v=20261101-buttons"></script>
-  <script src="work-content.js?v=20261101-buttons"></script>
+  <script src="demo-api.js?v=20261102-meetings"></script>
+  <script src="work-rules.js?v=20261102-meetings"></script>
+  <script src="app.js?v=20261102-meetings"></script>
+  <script src="work-content.js?v=20261102-meetings"></script>
 </body>
 </html>

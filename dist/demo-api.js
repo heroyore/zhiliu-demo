@@ -31,7 +31,18 @@
     else if(url==='/api/chat') result={answer:`演示数据：待审批 ${data.approvals.filter(x=>x.status==='待审批').length} 项，未完成任务 ${data.tasks.filter(x=>x.status!=='已完成').length} 项，共 ${data.documents.length} 份资料。此演示不连接外部 AI。`};
     else if(url==='/api/approvals' && method==='POST') { const x={...body,id:'SP-'+id().slice(0,8),applicant:user.name,status:'待审批',created_at:now(),history:[{action:'提交申请',actor:user.name,note:body.description||'申请已提交',created_at:now()}]};data.approvals.unshift(x);addAudit('approval',x.id,'created');notify('approval',x.id,'新审批已提交');result=x; }
     else if(url.startsWith('/api/approvals/')) {const x=data.approvals.find(v=>v.id===decodeURIComponent(url.split('/').pop()));if(!x)return response({error:'审批不存在'},404); if(method==='PATCH'){if(x.status!=='待审批')return response({error:'审批已经处理'},409);x.status=body.action==='approve'?'已通过':'已拒绝';x.decided_at=now();x.history.push({action:x.status,actor:user.name,note:body.note||'已处理',created_at:now()});addAudit('approval',x.id,body.action);notify('approval',x.id,'审批'+x.status);}result=x; }
-    else if(url==='/api/tasks' && method==='POST') {const x={...body,id:id(),owner_user_id:body.owner===user.name?user.id:null,status:'待开始',created_at:now()};data.tasks.unshift(x);addAudit('task',x.id,'created');notify('task',x.id,'新任务');result=x;}
+    else if(url==='/api/tasks' && method==='POST') {
+      if(body.source_meeting_id) {
+        let meeting;
+        try { meeting=JSON.parse(localStorage.getItem('zhiliu_demo_work_content_v1'))?.meetings?.find(x=>x.id===body.source_meeting_id); } catch {}
+        if(!meeting) return response({error:'来源会议不存在，请先保存会议记录'},409);
+        const existing=data.tasks.find(x=>x.source_meeting_id===meeting.id);
+        if(existing) return response(existing);
+        if(!String(body.title||'').trim() || !String(body.owner||'').trim()) return response({error:'请填写任务名称和负责人'},400);
+        body.source_meeting_title=meeting.title;
+      }
+      const x={...body,id:id(),owner_user_id:body.owner===user.name?user.id:null,status:'待开始',created_at:now()};data.tasks.unshift(x);addAudit('task',x.id,'created');notify('task',x.id,'新任务');result=x;
+    }
     else if(url.startsWith('/api/tasks/')) {const x=data.tasks.find(v=>v.id===decodeURIComponent(url.split('/').pop()));if(!x)return response({error:'任务不存在'},404);if(body.action==='advance'){const states=['待开始','进行中','待审核','已完成'];x.status=states[Math.min(states.indexOf(x.status)+1,3)];}else Object.assign(x,body);addAudit('task',x.id,'updated');result=x;}
     else if(url==='/api/documents' && method==='POST'){const x={...body,id:id(),tags:body.tags||[],created_at:now(),favorite:0,visited_at:null};data.documents.unshift(x);addAudit('document',x.id,'created');result=x;}
     else if(url.startsWith('/api/documents/') && url.endsWith('/preference')){const x=data.documents.find(v=>v.id===decodeURIComponent(url.split('/')[3]));if(!x)return response({error:'资料不存在'},404);if(body.action==='visit')x.visited_at=now();else x.favorite=body.action==='favorite'?1:0;result={ok:true};}

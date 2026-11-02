@@ -55,6 +55,28 @@ function apiHarness() {
   vm.runInContext(source('demo-api.js'),context);
   return {storage,block:()=>blocked=true,unblock:()=>blocked=false,fetch:context.window.fetch};
 }
+test('meeting follow-up creates one linked task even after a retry, preserving existing records',async()=>{
+  const h=apiHarness(); await h.fetch('/api/bootstrap');
+  h.storage.set('zhiliu_demo_work_content_v1',JSON.stringify({meetings:[{id:'m1',title:'启动会'}]}));
+  const body=JSON.stringify({source_meeting_id:'m1',title:'整理会议方案',owner:'演示主管',description:'整理结论',due_date:'2026-11-05'});
+  const first=await (await h.fetch('/api/tasks',{method:'POST',body})).json();
+  const second=await (await h.fetch('/api/tasks',{method:'POST',body})).json();
+  assert.equal(first.id,second.id);
+  assert.equal(first.source_meeting_title,'启动会');
+  const current=await (await h.fetch('/api/bootstrap')).json();
+  assert.equal(current.tasks.length,2);
+  assert.equal(current.audit.length,1);
+  assert.equal(current.notifications.length,1);
+});
+test('meeting task rejects missing source and failed saves can be retried without duplicate tasks',async()=>{
+  const h=apiHarness(); await h.fetch('/api/bootstrap');
+  const body=JSON.stringify({source_meeting_id:'m1',title:'跟进',owner:'演示主管'});
+  assert.equal((await h.fetch('/api/tasks',{method:'POST',body})).status,409);
+  h.storage.set('zhiliu_demo_work_content_v1',JSON.stringify({meetings:[{id:'m1',title:'会议'}]}));
+  h.block(); assert.equal((await h.fetch('/api/tasks',{method:'POST',body})).status,507);
+  h.unblock(); assert.equal((await h.fetch('/api/tasks',{method:'POST',body})).status,200);
+  assert.equal((await (await h.fetch('/api/bootstrap')).json()).tasks.length,2);
+});
 test('failed saves never appear in later reads or overwrite durable state',async()=>{
   const h=apiHarness(); await h.fetch('/api/bootstrap');
   const before=h.storage.get('zhiliu_public_demo_v1'); h.block();

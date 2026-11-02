@@ -394,7 +394,7 @@ function openTask(id) {
       <div class="detail-grid"><label class="field"><span>负责人</span>${ownerSelect(item.owner)}</label><label class="field"><span>优先级</span><select name="priority">${['紧急', '高', '普通', '低'].map(value => `<option ${value === item.priority ? 'selected' : ''}>${value}</option>`).join('')}</select></label></div>
       <div class="detail-grid"><label class="field"><span>分类标签</span><input name="tag" value="${esc(item.tag)}"></label><label class="field"><span>截止日期</span><input name="due_date" type="date" value="${esc(item.due_date)}"></label></div>
       <div class="decision-actions"><button class="button secondary" type="submit">保存修改</button>${nextIndex < taskStates.length ? `<button class="button primary" type="button" data-advance-task="${esc(item.id)}">推进至${taskStates[nextIndex]}</button>` : ''}</div>
-    </form>`);
+    </form>${item.source_meeting_id ? `<section class="detail-section meeting-followup"><h3>来源会议</h3><p>${esc(item.source_meeting_title||'会议记录')}</p><button class="button secondary" type="button" data-extra-edit="meetings" data-id="${esc(item.source_meeting_id)}">返回会议记录</button></section>` : ''}`);
 }
 
 async function openDocument(id) {

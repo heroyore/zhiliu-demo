@@ -90,3 +90,4 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 @media(prefers-reduced-motion:reduce){button,.button,.icon-button{transition:none!important}}
 .nav-item i{display:grid;place-items:center;flex-shrink:0}.nav-item i svg{width:18px;height:18px;display:block}.nav-item{min-height:42px;gap:12px}.nav-item.active i{color:#2563eb}
 @media(max-width:620px){.extra-panel .toolbar .search-input,.toolbar.floating .search-input{flex:1 0 100%;width:100%;min-width:0}.extra-panel .toolbar select{flex:1;min-width:0}.extra-panel .toolbar .button{flex:0 0 auto}}
+.meeting-followup{padding:18px;border:1px solid #dce7fc;background:#f8faff;border-radius:12px}.meeting-followup h3{margin-top:0}.meeting-followup .field textarea{min-height:100px;resize:vertical}.meeting-followup .button{white-space:normal}

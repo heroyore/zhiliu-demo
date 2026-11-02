@@ -71,7 +71,12 @@
     else if(type==='expenses') fields=expenseFields(item);
     else fields=field('收支项目','title',item.title,{required:true})+field('类型','type',item.type||'支出',{options:['收入','支出']})+field('金额（元）','amount',item.amount,{type:'number',required:true})+field('日期','date',item.date,{type:'date'})+field('分类','category',item.category)+field('说明','notes',item.notes,{multiline:true});
     const locked = type==='finance' && item.expense_id;
-    showDrawer('',''+(recordId?'查看 / 修改':'新增')+({clients:'客户',meetings:'会议记录',finance:'收支记录',expenses:'报销'}[type]),`<form id="extraWorkForm" class="extra-form" data-type="${type}" data-id="${safe(recordId)}"><fieldset ${locked?'disabled':''}>${fields}</fieldset>${locked ? '<p class="extra-note">这笔支出由报销自动生成，保留原始记账内容，不可单独修改或删除。</p>' : `<button class="button primary full" type="submit">${type==='expenses'?'保存并提交审批':'保存'}</button>${recordId ? `<button class="button danger full" type="button" data-extra-delete="${type}" data-id="${safe(recordId)}">删除记录</button>` : ''}`}</form>`);
+    showDrawer('',''+(recordId?'查看 / 修改':'新增')+({clients:'客户',meetings:'会议记录',finance:'收支记录',expenses:'报销'}[type]),`<form id="extraWorkForm" class="extra-form" data-type="${type}" data-id="${safe(recordId)}"><fieldset ${locked?'disabled':''}>${fields}</fieldset>${locked ? '<p class="extra-note">这笔支出由报销自动生成，保留原始记账内容，不可单独修改或删除。</p>' : `<button class="button primary full" type="submit">${type==='expenses'?'保存并提交审批':'保存'}</button>${recordId && !(type==='meetings' && state.data?.tasks.some(x=>x.source_meeting_id===recordId)) ? `<button class="button danger full" type="button" data-extra-delete="${type}" data-id="${safe(recordId)}">删除记录</button>` : ''}`}</form>`);
+    if(type==='meetings' && recordId) {
+      const linked=state.data?.tasks.find(x=>x.source_meeting_id===recordId);
+      const content=linked ? `<p class="extra-note">已有跟进任务，来源会议会保留，方便追溯。</p><p class="extra-note">${safe(linked.title)} · ${safe(linked.status)} · ${safe(linked.owner)} · ${safe(linked.due_date||'未设截止日期')}</p><button type="button" class="button secondary" data-open-type="task" data-open-id="${safe(linked.id)}">查看关联任务</button>` : `<p class="extra-note">将会议结论整理成一项跟进任务，安排负责人和截止日期。每场会议可生成一项关联任务；可在任务中继续修改。</p><form id="meetingTaskForm" data-id="${safe(recordId)}" class="extra-form">${field('跟进任务名称','title','跟进：'+item.title,{required:true})}${field('负责人','owner',state.data?.user.name,{required:true})}${field('截止日期','due_date','',{type:'date',required:true})}${field('要完成的事项','description',item.notes,{multiline:true,required:true})}<button class="button primary full" type="submit">生成跟进任务</button></form>`;
+      document.getElementById('drawerBody').insertAdjacentHTML('beforeend',`<section class="detail-section meeting-followup"><h3>会议后续工作</h3>${content}</section>`);
+    }
   }
   function expenseFields(item) {
     return field('报销项目','title',item.title,{required:true})+field('申请人','applicant',item.applicant||'演示主管',{required:true})+field('费用类型','category',item.category||'其他费用',{options:['交通费','差旅费','餐饮费','办公费用','其他费用']})+field('金额（元）','amount',item.amount,{type:'number',required:true})+field('发生日期','date',item.date||today(),{type:'date',required:true})+field('用途和说明','notes',item.notes,{multiline:true});
@@ -109,6 +114,7 @@
     if(remove && confirm('确定删除这条记录？建议先在数据备份中导出。')) {
       const type=remove.dataset.extraDelete;
       const item=records[type].find(x=>x.id===remove.dataset.id);
+      if(type==='meetings' && state.data?.tasks.some(x=>x.source_meeting_id===item?.id)) { toast('会议已有跟进任务，请保留来源记录'); return; }
       if(type==='expenses' || item?.expense_id) { toast('已进入报销流程的记录需保留，不可直接删除'); return; }
       const updated={...records,[type]:records[type].filter(item=>item.id!==remove.dataset.id)};
       try { commit(updated); render(type); closeDrawer(); toast('记录已删除'); }
@@ -133,7 +139,23 @@
     }
     const updated={...records,[type]:existing ? records[type].map(item=>item.id===form.dataset.id ? {...item,...values} : item) : [{id:crypto.randomUUID(),...values},...records[type]]};
     try { commit(updated); } catch(error) { toast('保存失败：'+error.message); return; }
-    render(type); if(type==='expenses' && existing) expenseDetail(records.expenses.find(x=>x.id===existing.id)); else closeDrawer(); toast('已保存到当前浏览器');
+    render(type); if(type==='expenses' && existing) expenseDetail(records.expenses.find(x=>x.id===existing.id)); else if(type==='meetings') edit(type,existing?.id || records.meetings[0].id); else closeDrawer(); toast('已保存到当前浏览器');
+  });
+  document.getElementById('drawerBody').addEventListener('submit', async event=>{
+    if(event.target.id!=='meetingTaskForm') return;
+    event.preventDefault();
+    const form=event.target,button=form.querySelector('button[type="submit"]');
+    if(button.disabled) return;
+    if(document.getElementById('extraWorkForm')?.dataset.dirty==='true') { toast('请先保存会议修改，再生成跟进任务'); return; }
+    const values=Object.fromEntries(new FormData(form));
+    for(const name of Object.keys(values)) values[name]=values[name].trim();
+    if(!values.title || !values.owner || !values.description || !values.due_date) { toast('请填写任务名称、负责人、截止日期和事项'); return; }
+    button.disabled=true;
+    try {
+      commit(records);
+      await api('/api/tasks',{method:'POST',body:JSON.stringify({...values,source_meeting_id:form.dataset.id,project:'会议跟进',priority:'普通',tag:'会议',due_text:values.due_date})});
+      await loadData(); edit('meetings',form.dataset.id); toast('跟进任务已保存，可在项目与任务中继续推进');
+    } catch(error) { toast(error.message); button.disabled=false; }
   });
   Object.keys(seed).forEach(type=>{
     const search=document.getElementById(type+'Search');
